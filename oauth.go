@@ -37,7 +37,6 @@ const (
 	REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token"
 	AUTHORIZE_URL     = "https://api.twitter.com/oauth/authorize"
 	ACCESS_TOKEN_URL  = "https://api.twitter.com/oauth/access_token"
-
 )
 
 var paramMap map[string]string
@@ -261,7 +260,7 @@ func RequestAPI(accessToken url.Values, method, resource string, param map[strin
 	result += url.QueryEscape(CONSUMER_KEY_PARAM+"="+CONSUMER_KEY) + url.QueryEscape("&")
 	result += url.QueryEscape(NONCE_PARAM+"="+nonce_value) + url.QueryEscape("&")
 	result += url.QueryEscape(SIGNATURE_METHOD_PARAM+"="+SIGNATURE_METHOD) + url.QueryEscape("&")
-//	result += url.QueryEscape(param["status"]) + url.QueryEscape("&")
+	//	result += url.QueryEscape(param["status"]) + url.QueryEscape("&")
 	result += url.QueryEscape(TIMESTAMP_PARAM+"="+strconv.FormatInt(timestamp, 10)) + url.QueryEscape("&")
 	// // AccessTokenを取得する場合はrequestTokenとverifyCodeを含める必要がある
 	result += url.QueryEscape(TOKEN_PARAM+"="+accessToken.Get("oauth_token")) + url.QueryEscape("&")
@@ -273,9 +272,9 @@ func RequestAPI(accessToken url.Values, method, resource string, param map[strin
 	// TODO: スペースのエンコードが"+"になるとまずいので、何か対策が必要。
 	// TODO: 本文のデータ内の%XX系の記号は%25XXに変換して、ハッシュ計算する必要がある。
 	re := regexp.MustCompile("\\++")
-	result += url.QueryEscape("&") + url.QueryEscape("status" + "=" + re.ReplaceAllString(url.QueryEscape(param["status"]), "%20"))
+	result += url.QueryEscape("&") + url.QueryEscape("status"+"="+re.ReplaceAllString(url.QueryEscape(param["status"]), "%20"))
 
-fmt.Println(result)
+	fmt.Println(result)
 
 	paramMap[VERSION_PARAM] = OAUTH_VERSION
 	paramMap[SIGNATURE_METHOD_PARAM] = SIGNATURE_METHOD
@@ -285,7 +284,7 @@ fmt.Println(result)
 	// paramMap[CALLBACK_PARAM] = "oob"
 	paramMap[TOKEN_PARAM] = accessToken.Get("oauth_token")
 	// paramMap[VERIFIER_PARAM] = verifyCode
-//	paramMap["status"] = param["status"]
+	//	paramMap["status"] = param["status"]
 
 	// ハッシュ計算
 	key := url.QueryEscape(CONSUMER_SECRET) + "&" + url.QueryEscape(accessToken.Get("oauth_token_secret"))
@@ -326,7 +325,7 @@ fmt.Println(result)
 	oauthHdr += NONCE_PARAM + "=\"" + paramMap[NONCE_PARAM] + "\","
 	oauthHdr += SIGNATURE_PARAM + "=\"" + url.QueryEscape(string(base64signature)) + "\","
 	oauthHdr += SIGNATURE_METHOD_PARAM + "=\"" + paramMap[SIGNATURE_METHOD_PARAM] + "\","
-//	oauthHdr += "status=\"" + url.QueryEscape(paramMap["status"]) + "\","
+	//	oauthHdr += "status=\"" + url.QueryEscape(paramMap["status"]) + "\","
 	oauthHdr += TIMESTAMP_PARAM + "=\"" + paramMap[TIMESTAMP_PARAM] + "\","
 	oauthHdr += TOKEN_PARAM + "=\"" + paramMap[TOKEN_PARAM] + "\","
 	// oauthHdr += VERIFIER_PARAM + "=\"" + paramMap[VERIFIER_PARAM] + "\","
